@@ -81,7 +81,6 @@ class SelectedQuestionView extends React.Component {
     this.setState(form);
   };
 
-
   render() {
     const {classes, selectedQuestion} = this.props;
     if (selectedQuestion)
