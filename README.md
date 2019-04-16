@@ -4,8 +4,10 @@
 # pluralsight_code_challenge
 
 <h3>Installation:</h3>
-** run "npm install" in the root folder and in the frontend folder
-** run "npm start" in the root folder
+<ul>
+  <li>run "npm install" in the root folder and in the frontend folder</li>
+  <li>run "npm start" in the root folder</li>
+</ul>
 
 
 This website demonstrate a ReactJS single page application using Node.JS backend.
