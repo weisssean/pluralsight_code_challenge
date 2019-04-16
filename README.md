@@ -1,9 +1,19 @@
+
+
+
 # pluralsight_code_challenge
+
+<h3>Installation:</h3>
+* run "npm install" in the root folder and in the frontend folder
+* run npm start in the root folder
+
 
 This website demonstrate a ReactJS single page application using Node.JS backend.
 The server loads and parses a csv data file into a json database.
 The data is requested by the client and is used to populate the initial state in for Redux store.
 This demo uses react-router for page management and Redux for application state.
+
+
 
 
 Frameworks:
