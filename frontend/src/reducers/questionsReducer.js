@@ -5,7 +5,6 @@ export default function questionsReducer(state = initialState.questions, action)
   let _questions = [];
   switch (action.type) {
     case types.LOAD_QUESTIONS_SUCCESS:
-
       return Object.assign({}, state, {
         questions: action.questions.questions,
         totalCount: action.questions.total
@@ -21,9 +20,8 @@ export default function questionsReducer(state = initialState.questions, action)
       _questions.unshift(action.question);
       return Object.assign({}, state, {
         questions: _questions,
-        totalCount: state.totalCount+1
+        totalCount: state.totalCount + 1
       });
-
 
     case types.UPDATE_QUESTION_SUCCESS:
       _questions = Object.assign([], state.questions.filter(q => q.id !== action.question.id));
@@ -36,7 +34,7 @@ export default function questionsReducer(state = initialState.questions, action)
       _questions = state.questions.filter(q => q.id !== action.id);
       return Object.assign({}, state, {
         questions: _questions,
-        totalCount: state.totalCount-1
+        totalCount: state.totalCount - 1
       });
 
     case types.TOGGLE_SORT:
@@ -53,14 +51,13 @@ export default function questionsReducer(state = initialState.questions, action)
 
     case types.SET_PAGE:
       return Object.assign({}, state, {
-        page:action.page
+        page: action.page
       });
 
     case types.SET_ROW_PER_PAGE:
       return Object.assign({}, state, {
-        rowPP:action.rowPP
+        rowPP: action.rowPP
       });
-
 
     default:
       return Object.assign({}, state);

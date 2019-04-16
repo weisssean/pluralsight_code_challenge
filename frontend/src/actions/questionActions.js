@@ -17,7 +17,15 @@ function selectQuestion(selected) {
   return {type: types.SELECT_QUESTION_SUCCESS, selected};
 }
 
-
+/**
+ * @function insertQuestion - for inserting a blank new question
+ * <ol>
+ * <li>posts the questions to the server.
+ * <li>dispatches an insert action.
+ * <li>dispatches a select action for the new question.
+ * </ol>
+ * @return {function} dispatch - the call for this function
+ * */
 export const insertQuestion = question => {
   return dispatch => {
     axios.post(`http://localhost:3004/questions/`, question)
@@ -25,7 +33,6 @@ export const insertQuestion = question => {
         console.log(response);
         dispatch(insertQuestionSuccess(question));
         dispatch(selectQuestion(question));
-
       })
       .catch(error => {
         console.log(error);
@@ -34,6 +41,14 @@ export const insertQuestion = question => {
   }
 };
 
+/**
+ * @function updateQuestion - for inserting a blank new question
+ * <ol>
+ * <li>puts the questions to the server.
+ * <li>dispatches an update action.
+ * </ol>
+ * @return {function} dispatch - the call for this function
+ * */
 export const updateQuestion = question => {
   return dispatch => {
     dispatch(selectQuestion(question));
@@ -49,6 +64,14 @@ export const updateQuestion = question => {
   }
 };
 
+/**
+ * @function deleteQuestion - for inserting a blank new question
+ * <ol>
+ * <li>deletes the questions from the server.
+ * <li>dispatches a delete action.
+ * </ol>
+ * @return {function} dispatch - the call for this function
+ * */
 export const deleteQuestion = questionId => {
   return dispatch => {
     dispatch(selectQuestion(null));

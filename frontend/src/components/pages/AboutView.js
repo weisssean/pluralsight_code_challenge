@@ -4,7 +4,6 @@ import {Grid, Typography} from "@material-ui/core/es";
 const AboutView = () => {
   return <Grid container spacing={16}>
     <Grid item xs={false} sm={2}/>
-
     <Grid item xs={12} sm={8}>
       <Typography variant="h3" gutterBottom>
         About this challenge
@@ -42,6 +41,7 @@ const AboutView = () => {
         <li>Responsive UX improvements</li>
         <li>More documentation using jsdocs and API publishing</li>
         <li>User sessions and analytics</li>
+        <li>Loading spinner and error handling</li>
       </ol>
     </Grid>
     <Grid item xs={false} sm={2}/>

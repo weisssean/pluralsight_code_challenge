@@ -41,6 +41,8 @@ class SelectedQuestionView extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    /**componentWillReceiveProps is deprecated so instead I used getDerivedStateFromProps
+     * to handle change in selectedQuestion*/
     if (nextProps.selectedQuestion !== prevState.selectedQuestion) {
       return {
         selectedQuestion: nextProps.selectedQuestion,
@@ -51,29 +53,37 @@ class SelectedQuestionView extends React.Component {
     else return null;
   }
 
+/**
+ * @function onSubmitQuestion - submits the changes
+ * <ol>
+ * <li>gets the updated state
+ * <li>calls an update action
+ * <li>closes the edit boxes
+ * </ol>
+ * */
   onSubmitQuestion = () => {
     const {question, answer, selectedQuestion} = this.state;
     const questionToEdit = Object.assign({}, selectedQuestion, {question, answer});
     this.props.actions.updateQuestion(questionToEdit);
     this.setState({editQuestion: false, editAnswer: false});
-
   };
 
-
+/**
+ * @function updateFormState - updates the state with the newly typed data
+ * <ol>
+ * <li>gets the name of the input ('question' or 'answer')
+ * <li>sets the value to the state object
+ * </ol>
+ * */
   updateFormState = (event) => {
     const field = event.target.name;
     const form = {[field]: event.target.value};
-    console.log(form);
-    // this.setState({question: event.target.value});
-    this.setState(form, () => {
-      console.log(this.state);
-    });
+    this.setState(form);
   };
 
 
   render() {
     const {classes, selectedQuestion} = this.props;
-
     if (selectedQuestion)
       return (
         <div className={classes.root}>
