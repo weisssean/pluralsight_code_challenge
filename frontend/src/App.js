@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
+import {BrowserRouter as Router} from "react-router-dom";
+
 import {connect} from "react-redux";
 
 import axios from 'axios';
@@ -14,36 +16,61 @@ class App extends Component {
     super(props);
     this.state = {
       questions: []
-    }
+    };
+    this.getQuestions();
   }
 
-  componentWillMount() {
-    axios.get('http://localhost:3004/questions?_page=0&_limit=200')
+  getQuestions = () => {
+
+
+    axios.get(`http://localhost:3004/questions?_sort=${this.props.sortBy}&_order=${this.props.orderBy}&_page=${this.props.page}&_limit=${this.props.rowPP}`)
       .then(response => {
-        console.log(response);
-        this.props.actions.onLoadQuestions(response.data);
+        const total = response.headers["x-total-count"];
+        this.props.actions.onLoadQuestions({questions:response.data, total: parseInt(total)});
       })
       .catch(error => {
         console.log(error);
       });
   };
 
+  componentDidUpdate(prevProps, prevState, prevContext) {
+    if (prevProps.sortBy !== this.props.sortBy ||
+      prevProps.orderBy !== this.props.orderBy||
+      prevProps.page !== this.props.page||
+      prevProps.rowPP !== this.props.rowPP) {
+      this.getQuestions();
+    }
+  }
+
   render() {
     return (
-      <div className="App">
-        <NavigationDrawer/>
-      </div>
+      <Router>
+        <div className="App">
+          <NavigationDrawer/>
+        </div>
+      </Router>
     );
   }
 }
 
+App.propTypes = {
+  orderBy: PropTypes.string.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  actions: PropTypes.shape({
+    onLoadQuestions: PropTypes.func.isRequired
+  }).isRequired,
+  questions: PropTypes.array.isRequired,
+};
 
 const mapStateToProps = state => {
   return {
+    orderBy: state.orderBy,
+    sortBy: state.sortBy,
+    page:state.page,
+    rowPP:state.rowPP,
     questions: state.questions
   }
 };
-
 
 
 function mapDispatchToProps(dispatch) {
@@ -60,13 +87,6 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-
-App.propTypes = {
-  actions: PropTypes.shape({
-    onLoadQuestions: PropTypes.func.isRequired
-  }).isRequired,
-  questions: PropTypes.array.isRequired,
-};
 
 export default connect(
   mapStateToProps,

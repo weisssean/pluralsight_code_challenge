@@ -86,8 +86,8 @@ class SelectedQuestionView extends React.Component {
                   id="standard-full-width"
                   name="question"
                   label="Question"
-                  placeholder="Filter"
-                  helperText="Type to edit"
+                  placeholder="Type your question here"
+                  helperText="Click outside the box to submit"
                   fullWidth
                   margin="normal"
                   defaultValue={this.state.question}
@@ -102,7 +102,7 @@ class SelectedQuestionView extends React.Component {
                   <span className={classes.description}><small>Question</small></span>
                   <div className={classes.displayText}
                   >
-                    {this.state.question}
+                    {this.state.question?this.state.question:"Click here to edit this question"}
                   </div>
                   <span className={classes.description}><small>Click to edit</small></span>
                 </div>
@@ -115,8 +115,8 @@ class SelectedQuestionView extends React.Component {
                   id="standard-full-width"
                   name="answer"
                   label="Answer"
-                  placeholder="Filter"
-                  helperText="Type to edit"
+                  placeholder="Type your answer here"
+                  helperText="Click outside the box to submit"
                   fullWidth
                   margin="normal"
                   defaultValue={this.state.answer}
@@ -131,7 +131,7 @@ class SelectedQuestionView extends React.Component {
                   <span className={classes.description}><small>Answer</small></span>
                   <div className={classes.displayText}
                   >
-                    {this.state.answer}
+                    {this.state.answer?this.state.answer:"Click here to edit this answer"}
                   </div>
                   <span className={classes.description}><small>Click to edit</small></span>
                 </div>

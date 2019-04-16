@@ -13,7 +13,7 @@ import {
   ListItemSecondaryAction,
   Divider,
   TextField,
-  IconButton
+  IconButton,
 } from "@material-ui/core/es/index";
 import uuidv4 from "uuid/v4";
 
@@ -40,14 +40,15 @@ class QuestionsList extends React.Component {
     this.setState({filterText: e.target.value});
   };
 
-  onInsertQuestion=()=>{
-    const question= {
+  onInsertQuestion = () => {
+    const question = {
       id: uuidv4(),
-      question: "Enter question here",
-      answer: "Enter answer for your question"
+      question: "",
+      answer: ""
     };
     this.props.actions.insertQuestion(question);
   };
+
 
   render() {
     const {classes, questions, selectedQuestion} = this.props;
@@ -56,7 +57,6 @@ class QuestionsList extends React.Component {
         <TextField
           className={classes.search}
           id="standard-full-width"
-          label="Questions"
           placeholder="Filter"
           helperText="Type to filter"
           fullWidth
@@ -81,7 +81,7 @@ class QuestionsList extends React.Component {
                         button
                         selected={selectedQuestion && selectedQuestion.id === item.id}
                         onClick={this.props.actions.onSelectQuestion.bind(this, item)}>
-                <ListItemText primary={item.question}/>
+                <ListItemText primary={`Q:  ${item.question}`} secondary={`A:  ${item.answer}`}/>
                 <ListItemSecondaryAction>
                   <IconButton aria-label="Delete" onClick={this.props.actions.deleteQuestion.bind(this, item.id)}>
                     <DeleteIcon/>
@@ -102,7 +102,7 @@ QuestionsList.propTypes = {
   actions: PropTypes.shape({
     onSelectQuestion: PropTypes.func.isRequired,
     insertQuestion: PropTypes.func.isRequired,
-    deleteQuestion: PropTypes.func.isRequired
+    deleteQuestion: PropTypes.func.isRequired,
   }).isRequired
 };
 

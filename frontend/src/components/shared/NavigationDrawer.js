@@ -1,30 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {Route, Link as RouterLink} from "react-router-dom";
+
 import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import LiveHelpIcon from '@material-ui/icons/LiveHelp';
-import CodeIcon from '@material-ui/icons/Code';
-import MailIcon from '@material-ui/icons/Mail';
-import QuestionsList from "../questions/QuestionsList";
-import Grid from "@material-ui/core/es/Grid/Grid";
-import Paper from "@material-ui/core/es/Paper/Paper";
-import SelectedQuestionView from "../questions/SelectedQuestionView";
+import {
+  Menu as MenuIcon,
+  Code as CodeIcon,
+  Description as DescriptionIcon,
+  LiveHelp as LiveHelpIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon
+} from '@material-ui/icons';
+import {
+  AppBar,
+  CssBaseline,
+  Divider, Drawer, IconButton, List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction, ListItemText,
+  ListSubheader,
+  Switch,
+  TablePagination, Toolbar, Typography
+} from "@material-ui/core/es/index";
+import * as types from "../../actions/actionTypes";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
 
-const drawerWidth = 240;
+import QuestionsView from '../questions/QuestionsView';
+import AboutView from "../pages/AboutView";
+import InstructionsView from "../pages/InstructionsView";
+
+const drawerWidth = 400;
 
 const styles = theme => ({
   root: {
@@ -96,6 +103,26 @@ class NavigationDrawer extends React.Component {
     this.setState({open: false});
   };
 
+  handleToggle = (type) => {
+    switch (type) {
+      case 'sortBy':
+        this.props.actions.toggleSort();
+        break;
+      case 'orderBy':
+        this.props.actions.toggleOrder();
+        break;
+      default:return;
+    }
+  };
+
+  handleChangePage = (e, page) => {
+    this.props.actions.setPage(page)
+  };
+
+  handleChangeRowsPerPage = (e, e2) => {
+    this.props.actions.setRowsPerPage(e2.key)
+  };
+
   render() {
     const {classes, theme} = this.props;
     const {open} = this.state;
@@ -119,7 +146,7 @@ class NavigationDrawer extends React.Component {
               <MenuIcon/>
             </IconButton>
             <Typography variant="h6" color="inherit" noWrap>
-              Pluralsight Coding Exercise
+              Pluralsight Coding Exercise - Sean Weiss
             </Typography>
           </Toolbar>
         </AppBar>
@@ -139,12 +166,61 @@ class NavigationDrawer extends React.Component {
           </div>
           <Divider/>
           <List>
-            {['Questions', 'Code', 'Next Steps'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <LiveHelpIcon/> : <CodeIcon/>}</ListItemIcon>
-                <ListItemText primary={text}/>
-              </ListItem>
-            ))}
+            <ListItem button component={RouterLink} to="/questions">
+              <ListItemIcon>
+                <LiveHelpIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Questions"/>
+            </ListItem>
+            <ListItem button component={RouterLink} to="/about">
+              <ListItemIcon>
+                <CodeIcon/>
+              </ListItemIcon>
+              <ListItemText primary="About"/>
+            </ListItem>
+            <ListItem button component={RouterLink} to="/instructions">
+              <ListItemIcon>
+                <DescriptionIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Instructions"/>
+            </ListItem>
+            <Divider/>
+            <ListSubheader>Questions Options</ListSubheader>
+            <ListItem>
+              <TablePagination
+                rowsPerPageOptions={[50, 100, 250]}
+                component="div"
+                count={this.props.totalCount}
+                rowsPerPage={this.props.rowPP}
+                page={this.props.page}
+                backIconButtonProps={{
+                  'aria-label': 'Previous Page',
+                }}
+                nextIconButtonProps={{
+                  'aria-label': 'Next Page',
+                }}
+                onChangePage={this.handleChangePage}
+                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Sort By" secondary={this.props.sortBy === "question" ? "Question" : "Answer"}/>
+              <ListItemSecondaryAction>
+                <Switch
+                  onChange={this.handleToggle.bind(this, 'sortBy')}
+                  checked={this.props.sortBy === "question"}
+                />
+              </ListItemSecondaryAction>
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Order By" secondary={this.props.orderBy.toUpperCase()}/>
+              <ListItemSecondaryAction>
+                <Switch
+                  onChange={this.handleToggle.bind(this, 'orderBy')}
+                  checked={this.props.orderBy === "asc"}
+                />
+              </ListItemSecondaryAction>
+            </ListItem>
           </List>
         </Drawer>
         <main
@@ -154,38 +230,14 @@ class NavigationDrawer extends React.Component {
         >
           <div className={classes.drawerHeader}/>
 
-          <Grid container spacing={16}>
-            <Grid item xs={12} sm={4}>
-              <QuestionsList/>
-            </Grid>
-            <Grid item xs={12} sm={8}>
-              <SelectedQuestionView />
-              {/*<Typography paragraph>*/}
-                {/*Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor*/}
-                {/*incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent*/}
-                {/*elementum facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in*/}
-                {/*hendrerit gravida rutrum quisque non tellus. Convallis convallis tellus id interdum*/}
-                {/*velit laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing.*/}
-                {/*Amet nisl suscipit adipiscing bibendum est ultricies integer quis. Cursus euismod quis*/}
-                {/*viverra nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum leo.*/}
-                {/*Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus*/}
-                {/*at augue. At augue eget arcu dictum varius duis at consectetur lorem. Velit sed*/}
-                {/*ullamcorper morbi tincidunt. Lorem donec massa sapien faucibus et molestie ac.*/}
-              {/*</Typography>*/}
-              {/*<Typography paragraph>*/}
-                {/*Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla*/}
-                {/*facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac*/}
-                {/*tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat*/}
-                {/*consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus*/}
-                {/*sed vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in.*/}
-                {/*In hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem*/}
-                {/*et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique*/}
-                {/*sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo*/}
-                {/*viverra maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam*/}
-                {/*ultrices sagittis orci a.*/}
-              {/*</Typography>*/}
-            </Grid>
-          </Grid>
+          {/*<Switch>*/}
+          <Route path="/" exact component={QuestionsView}/>
+          <Route path="/questions" component={QuestionsView}/>
+          <Route path="/about" component={AboutView}/>
+          <Route path="/instructions" component={InstructionsView}/>
+
+
+          {/*</Switch>*/}
 
 
         </main>
@@ -194,9 +246,43 @@ class NavigationDrawer extends React.Component {
   }
 }
 
+
+const mapStateToProps = state => {
+  return {
+    sortBy: state.sortBy,
+    orderBy: state.orderBy,
+    totalCount: state.totalCount,
+    rowPP: state.rowPP,
+    page: state.page,
+  }
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(
+      {
+        toggleSort: () => ({
+          type: types.TOGGLE_SORT
+        }),
+
+        toggleOrder: () => ({
+          type: types.TOGGLE_ORDER
+        }),
+        setPage: page => ({type: types.SET_PAGE, page}),
+        setRowsPerPage: rowPP => ({type: types.SET_ROW_PER_PAGE, rowPP}),
+      },
+      dispatch
+    )
+  };
+}
+
+
 NavigationDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, {withTheme: true})(NavigationDrawer);
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(withStyles(styles, {withTheme: true})(NavigationDrawer));
+
